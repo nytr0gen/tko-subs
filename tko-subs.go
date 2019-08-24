@@ -284,7 +284,12 @@ func scanDomain(domain string, cmsRecords []*CMS, config Configuration) ([]Domai
 // apexResolves function returns false if the domain's apex returns NXDOMAIN, and true otherwise
 func apexResolves(domain string) (bool, error) {
 	apex, err := publicsuffix.EffectiveTLDPlusOne(unFqdn(domain))
-	exists, err := resolves(apex)
+
+	exists, err := resolves(domain)
+	if err != nil || !exists {
+		return false, err
+	}
+	exists, err = resolves(apex)
 	if err != nil {
 		return false, err
 	}
